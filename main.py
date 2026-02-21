@@ -1,7 +1,7 @@
-import gui
+import find_replace_gui
 
 def main():
-    gui.GUI().run_gui()
+    gui.FindReplaceGUI().run()
 
 if __name__ == '__main__':
     main()
