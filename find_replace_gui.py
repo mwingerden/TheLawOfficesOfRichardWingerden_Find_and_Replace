@@ -4,7 +4,7 @@ from tkinter import messagebox
 from tkinter.constants import DISABLED, NORMAL
 from tkinter.filedialog import askdirectory
 
-from rind_And_replace import FindAndReplace
+from find_and_replace import FindAndReplace
 
 class FindReplaceGUI:
 
