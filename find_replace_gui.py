@@ -24,6 +24,7 @@ class FindReplaceGUI:
         self._replace_with_entry = None
 
         self._find_replace_engine = FindAndReplace()
+        self._reports = []
 
     def run(self):
         self._setup_gui()
@@ -191,4 +192,17 @@ class FindReplaceGUI:
             return
 
         for find_text, replace_text in self._find_replace_list:
-            self._find_replace_engine.find_and_replace(self._source_folder, find_text, replace_text)
+            self._reports.append(self._find_replace_engine.find_and_replace(self._source_folder,
+                                                                            find_text,
+                                                                            replace_text))
+
+        for report in self._reports:
+            if not report.success:
+                messagebox.showerror("Error", report.message)
+            else:
+                messagebox.showinfo(
+                    "Complete",
+                    f"Processed {report.files_processed} files.\n"
+                    f"Modified {report.files_modified} files.\n"
+                    f"Total replacements: {report.total_replacements}"
+                )
