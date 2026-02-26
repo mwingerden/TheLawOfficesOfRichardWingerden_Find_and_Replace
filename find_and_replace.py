@@ -88,8 +88,13 @@ class FindAndReplace:
 
     def _process_files(self, report: FindReplaceReport) -> FindReplaceReport:
         for file_path in self._list_word_doc_files:
+            logging.info("Processing %s", file_path.name)
             report.files_processed += 1
-            doc = Document(str(file_path))
+            try:
+                doc = Document(str(file_path))
+            except Exception as e:
+                report.warnings.append(f"Failed to open {file_path.name}: {e}")
+                continue
 
             file_modified = False
 
