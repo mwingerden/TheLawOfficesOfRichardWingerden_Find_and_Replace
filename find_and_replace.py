@@ -2,6 +2,8 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from docx import Document
+
 
 @dataclass
 class FindReplaceReport:
@@ -40,6 +42,12 @@ class FindAndReplace:
         ]
 
     def find_and_replace(self, source_folder: str, word_find: str, word_replace: str) -> FindReplaceReport:
+        if not word_find or not word_find.strip():
+            raise ValueError("word_find must not be blank")
+
+        if not word_replace or not word_replace.strip():
+            raise ValueError("word_replace must not be blank")
+
         self._source_folder = Path(source_folder)
         self._word_find = word_find
         self._word_replace = word_replace
@@ -53,13 +61,7 @@ class FindAndReplace:
             report.error_message = "No .docx files found."
             return report
 
-        if not word_find:
-            raise ValueError("word_find must not be blank")
-
-        if not word_replace:
-            raise ValueError("word_replace must not be blank")
-
-        print(self._list_word_doc_files)
+        report = self._process_files(report)
         report.success = True
         return report
 
@@ -83,3 +85,25 @@ class FindAndReplace:
             return False
 
         return True
+
+    def _process_files(self, report: FindReplaceReport) -> FindReplaceReport:
+        for file_path in self._list_word_doc_files:
+            report.files_processed += 1
+            doc = Document(str(file_path))
+
+            file_modified = False
+
+            for para in doc.paragraphs:
+                for run in para.runs:
+                    if self._word_find in run.text:
+                        occurrences = run.text.count(self._word_find)
+                        run.text = run.text.replace(self._word_find, self._word_replace)
+
+                        report.total_replacements += occurrences
+                        file_modified = True
+
+            if file_modified:
+                doc.save(str(file_path))
+                report.files_modified += 1
+
+        return report

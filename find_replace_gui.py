@@ -6,6 +6,7 @@ from tkinter.filedialog import askdirectory
 
 from find_and_replace import FindAndReplace
 
+
 class FindReplaceGUI:
 
     def __init__(self):
@@ -206,3 +207,4 @@ class FindReplaceGUI:
                     f"Modified {report.files_modified} files.\n"
                     f"Total replacements: {report.total_replacements}"
                 )
+        self._reports.clear()
